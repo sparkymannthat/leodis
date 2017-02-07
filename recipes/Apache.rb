@@ -1,4 +1,11 @@
 #Installs Apache we server
+bash "stop httpd if it exists" do
+  code <<-EOH
+    #{'/opt/apache/bin/apachectl -k stop'}
+  EOH
+  only_if { File.exists?('/opt/apache/bin/apachectl')}
+end
+
 package "apache2" do
   action :install
 end
@@ -8,8 +15,8 @@ package "node" do
   action :install
 end
 
-#installs npm
-package "npm" do
+#installs nodejs
+package "nodejs" do
   action :install
 end
 
@@ -174,20 +181,21 @@ bash 'extract node for Leodis' do
   EOH
 end
 
+
+#removes the current default site , this allows our config file to be used for leodis
+bash 'remove symbolic link for 000-default.conf' do
+  code <<-EOH
+    rm #{'/etc/apache2/sites-enabled/*'}
+  EOH
+  #only_if { File.exists?('/etc/apache2/sites-enabled/000-default*')}
+end
+
 #creates the symbolic link for the leodis config file for appache
 bash 'setup symbolic link for httpd-vhosts' do
   code <<-EOH
     ln -s #{'/etc/apache2/sites-available/httpd-vhosts.conf'} #{'/etc/apache2/sites-enabled/httpd-vhosts.conf'}
   EOH
   not_if { File.exists?('/etc/apache2/sites-enabled/httpd-vhosts.conf')}
-end
-
-#removes the current default site , this allows our config file to be used for leodis
-bash 'remove symbolic link for 000-default.conf' do
-  code <<-EOH
-    rm #{'/etc/apache2/sites-enabled/000-default.conf'}
-  EOH
-  only_if { File.exists?('/etc/apache2/sites-enabled/000-default.conf')}
 end
 
 #Start the leodis node website
