@@ -1,4 +1,4 @@
-#Installs Apache we server
+#stops the current version if its there
 bash "stop httpd if it exists" do
   code <<-EOH
     #{'/opt/apache/bin/apachectl -k stop'}
@@ -6,6 +6,7 @@ bash "stop httpd if it exists" do
   only_if { File.exists?('/opt/apache/bin/apachectl')}
 end
 
+#Installs Apache we server
 package "apache2" do
   action :install
 end
