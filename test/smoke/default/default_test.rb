@@ -26,9 +26,7 @@ descibe package 'httpd' do
   it {should_not be installed }
 end
 
-describe port(1137) do
-  it { should be_listening }
-end
+
 
 
 
