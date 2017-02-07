@@ -6,7 +6,7 @@ bash "stop httpd if it exists" do
   only_if { File.exists?('/opt/apache/bin/apachectl')}
 end
 
-#Installs Apache we server
+#Installs Apache web server
 package "apache2" do
   action :install
 end
